@@ -1,25 +1,25 @@
+.data
+.align 2   # Ensure that the data is aligned to word boundaries
+
 .text
 .globl init_student
 
+# Function: init_student
+# Arguments:
+#   $a0 - address of the record to initialize (student record)
+#   $a1 - ID (22 bits)
+#   $a2 - credits (10 bits)
+#   $a3 - pointer to the student's name (32 bits)
 init_student:
-    # Ensure address in $a0 is word-aligned
-    andi $t2, $a0, 3
-    bnez $t2, handle_misalignment
+    # Combine ID and credits into a single word.
+    sll $t0, $a1, 10        # Shift ID left to leave space for credits
+    or $t0, $t0, $a2        # Combine ID with credits in the lower 10 bits
 
-    li $t0, 0                 
-    sll $t1, $a1, 10          
-    or $t0, $t0, $t1          
-    or $t0, $t0, $a2          
+    sw $t0, 0($a0)          # Store ID and credits at the beginning of the record
+    sw $a3, 4($a0)          # Store the pointer to the name right after
 
-    sw $t0, 0($a0)            
-    sw $a3, 4($a0)            
-
-    jr $ra                    
-
-handle_misalignment:
-    addi $a0, $a0, 4
-    andi $a0, $a0, -4
-    j init_student                            
+    jr $ra                  # Return from the function
+                          
 	
 print_student:
 	jr $ra
