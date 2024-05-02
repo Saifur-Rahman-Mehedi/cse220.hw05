@@ -1,8 +1,11 @@
 .text
+.globl init_student
 
 init_student:
-
-    jr $ra                     
+    sw $a0, 0($a3)          
+    sw $a1, 4($a3)         
+    sw $a2, 8($a3)          
+    jr $ra                       
 
 print_student:
 
