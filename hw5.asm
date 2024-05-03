@@ -55,14 +55,14 @@ init_loop:
 
     lw $a0, 0($t0)
     lw $a1, 0($t1)
-    la $a2, $t2
+    la $a2, 0($t2)
 
-    la $a3, $s0
+    la $a3, 0($s0)
     jal init_student
 
     addi $t0, $t0, 4
     addi $t1, $t1, 4
-    addi $s0, $s0, 8
+    addi $s0, $s0, 12
 
     find_next_name:
         lbu $t4, 0($t2)
