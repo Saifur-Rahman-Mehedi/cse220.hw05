@@ -17,27 +17,22 @@ print_student:
     lw $t1, 4($a0)      
     lw $t2, 8($a0)     
 
-    # Print ID
     move $a0, $t0
     li $v0, 1           
     syscall
 
-    # Print space
     li $a0, ' '
     li $v0, 11         
     syscall
 
-    # Print credits
     move $a0, $t1
     li $v0, 1           
     syscall
 
-    # Print space
     li $a0, ' '
     li $v0, 11          
     syscall
 
-    # Print name
     move $a0, $t2
     li $v0, 4           
     syscall
@@ -60,9 +55,9 @@ init_loop:
 
     lw $a0, 0($t0)
     lw $a1, 0($t1)
-    la $a2, ($t2)
+    la $a2, $t2
 
-    la $a3, ($s0)
+    la $a3, $s0
     jal init_student
 
     addi $t0, $t0, 4
