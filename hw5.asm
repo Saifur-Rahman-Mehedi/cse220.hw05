@@ -44,7 +44,8 @@ print_student:
     li $v0, 4           # syscall for printing string
     syscall
 
-    jr $ra              # Return to the caller        
+    jr $ra              # Return to the caller
+  
 	
 init_student_array:
 	jr $ra
