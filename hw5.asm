@@ -55,9 +55,9 @@ init_loop:
 
     lw $a0, 0($t0)
     lw $a1, 0($t1)
-    la $a2, 0($t2)
+    la $a2, ($t2)
 
-    la $a3, 0($s0)
+    la $a3, ($s0)
     jal init_student
 
     addiu $t0, $t0, 4
