@@ -1,123 +1,93 @@
-# Main entry for testing
-.text
-.globl main
-main:
-    lw $a0, _num_students
-    la $a1, _id_list
-    la $a2, _credits_list
-    la $a3, _names
-
-    addi $sp, $sp, -4
-    la $s0, _records
-    sw $s0, 0($sp)
-
-    jal init_student_array
-    addi $sp, $sp, 4
-
-    li $s1, 0  # Loop counter
-    lw $s2, _num_students
-
-_print_loop:
-    beq $s1, $s2, _exit_print_loop
-    lw $a0, 0($s0)  # $s0 stores pointer to next student record
-    jal print_student
-    
-    li $a0, '\n'
-    li $v0, 11
-    syscall
-    
-    addi $s0, $s0, 12  # Go to the next student record
-    addi $s1, $s1, 1
-    j _print_loop
-
-_exit_print_loop:
-    li $v0, 10
-    syscall
-
-
-# Data segment setup as per test case requirements
 .data
-_num_students: .word 3
-_id_list: .word 3126375, 1264356, 553656
-_credits_list: .word 314, 511, 290
-_names: .ascii "Kevin T. McDonnell\0Wolfie Seawolf\0Kelly Chen\0"
-_records: .space 36  # 3 records each of 12 bytes
+.align 2
+unique_record: .space 12  
 
-# Procedures for initializing and printing students
 .text
 .globl init_student
 init_student:
-    sw $a0, 0($a3)  # Store ID
-    sw $a1, 4($a3)  # Store credits
-    sw $a2, 8($a3)  # Store pointer to the name
-    jr $ra
+    sw $a0, 0($a3)  # Store student ID at base address of record
+    sw $a1, 4($a3)  # Store credits next to ID
+    sw $a2, 8($a3)  # Store address of the student's name
+    jr $ra          # Return from the subroutine
 
+.text
 .globl print_student
 print_student:
-    lw $t0, 0($a0)  # Load ID
+    lw $t0, 0($a0)  # Load student ID
     lw $t1, 4($a0)  # Load credits
     lw $t2, 8($a0)  # Load name pointer
 
-    # Print ID
     move $a0, $t0
     li $v0, 1
-    syscall
+    syscall          # Print ID
 
     li $a0, ' '
     li $v0, 11
-    syscall
+    syscall          # Print space
 
-    # Print credits
     move $a0, $t1
     li $v0, 1
-    syscall
+    syscall          # Print credits
 
     li $a0, ' '
     li $v0, 11
-    syscall
+    syscall          # Print space
 
-    # Print name
     move $a0, $t2
     li $v0, 4
-    syscall
+    syscall          # Print name
 
-    jr $ra
+    li $a0, '\n'
+    li $v0, 11
+    syscall          # Print newline for separation
 
+    jr $ra           # Return from subroutine
+
+.text
 .globl init_student_array
 init_student_array:
-    lw $s0, 0($sp)
-    move $t0, $a1
-    move $t1, $a2
-    move $t2, $a3
+    lw $s0, 0($sp)   # Load base address of the records array
+    move $t0, $a1    # Pointer to ID list
+    move $t1, $a2    # Pointer to credits list
+    move $t2, $a3    # Pointer to names array
 
-    li $t3, 0
-    blez $a0, init_exit
+    li $t3, 0        # Counter for loop
+    blez $a0, init_exit  # Exit if number of students is zero
 
 init_loop:
-    beq $t3, $a0, init_exit
+    beq $t3, $a0, init_exit  # End loop if processed all students
 
-    lw $a0, 0($t0)
-    lw $a1, 0($t1)
-    move $a2, $t2
+    lw $a0, 0($t0)  # Load student ID
+    lw $a1, 0($t1)  # Load credits
+    la $a2, ($t2)   # Load address of the current name
 
-    add $a3, $s0, $zero
-    jal init_student
+    la $a3, ($s0)   # Address to store the record
+    jal init_student    # Initialize student record
 
-    addiu $t0, $t0, 4
-    addiu $t1, $t1, 4
-    addiu $s0, $s0, 12
+    addiu $t0, $t0, 4   # Next student ID
+    addiu $t1, $t1, 4   # Next credit
+    addiu $s0, $s0, 12  # Next record
 
-    # Find the next name in the names string
-    find_next_name:
+    find_next_name:     # Move to the next name
         lbu $t4, 0($t2)
-        beqz $t4, update_name_pointer
+        beqz $t4, update_name_pointer  # Check for null terminator
         addiu $t2, $t2, 1
         j find_next_name
     update_name_pointer:
-        addiu $t2, $t2, 1
+        addiu $t2, $t2, 1  # Move past the null terminator to start of next name
 
     addiu $t3, $t3, 1
     j init_loop
 
 init_exit:
+    jr $ra
+
+# Additional operations if needed
+insert:
+    jr $ra
+    
+search:
+    jr $ra
+
+delete:
     jr $ra
